@@ -11,6 +11,8 @@
 #import <CommonCrypto/CommonCrypto.h>
 
 #import "AFAmazonS3Manager.h"
+#import "ListObjectsParser.h"
+#import "S3Object.h"
 
 BOOL shouldKeepRunning = YES;
 
@@ -27,6 +29,18 @@ int main(int argc, const char * argv[]) {
         s3Manager.requestSerializer.region = configJson[@"Region"] ?: AFAmazonS3USStandardRegion;
         s3Manager.requestSerializer.bucket = configJson[@"Bucket"];
         
+        
+        // Get the list of objects
+        // TODO use marker to get > 1000 of them.
+        [s3Manager GET:@"/" parameters:nil success:^(AFHTTPRequestOperation *operation, NSXMLParser *responseObject) {
+            ListObjectsParser *listObjects = [ListObjectsParser parse:responseObject];
+            NSLog(@"isTruncated: %@", listObjects.isTruncated ? @"Yes" : @"No");
+            NSLog(@"objects: %@", listObjects.objects);
+            
+            shouldKeepRunning = NO;
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            shouldKeepRunning = NO;
+        }];
         
         // Get the file using url loading mechanisms to get the mime type.
         NSMutableURLRequest *fileRequest = [NSMutableURLRequest requestWithURL:[NSURL fileURLWithPath:@"/Users/chris/car.jpg"]];
@@ -54,10 +68,10 @@ int main(int argc, const char * argv[]) {
         
         AFHTTPRequestOperation *operation = [s3Manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
             NSLog(@"Upload Complete");
-            shouldKeepRunning = NO;
+//            shouldKeepRunning = NO;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
-            shouldKeepRunning = NO;
+//            shouldKeepRunning = NO;
         }];
         [s3Manager.operationQueue addOperation:operation];
 

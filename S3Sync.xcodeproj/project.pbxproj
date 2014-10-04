@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8332438F19E010F2000B6E4E /* ListObjectsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8332438E19E010F2000B6E4E /* ListObjectsParser.m */; };
+		8332439219E014D5000B6E4E /* S3Object.m in Sources */ = {isa = PBXBuildFile; fileRef = 8332439119E014D5000B6E4E /* S3Object.m */; };
 		83805C3B19DEBAAA008AD8F0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 83805C3A19DEBAAA008AD8F0 /* main.m */; };
 		83805C5E19DEBB0A008AD8F0 /* AFAmazonS3Manager.m in Sources */ = {isa = PBXBuildFile; fileRef = 83805C5919DEBAFB008AD8F0 /* AFAmazonS3Manager.m */; };
 		83805C5F19DEBB0A008AD8F0 /* AFAmazonS3RequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 83805C5B19DEBAFB008AD8F0 /* AFAmazonS3RequestSerializer.m */; };
@@ -34,6 +36,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8332438D19E010F2000B6E4E /* ListObjectsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListObjectsParser.h; sourceTree = "<group>"; };
+		8332438E19E010F2000B6E4E /* ListObjectsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListObjectsParser.m; sourceTree = "<group>"; };
+		8332439019E014D5000B6E4E /* S3Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = S3Object.h; sourceTree = "<group>"; };
+		8332439119E014D5000B6E4E /* S3Object.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = S3Object.m; sourceTree = "<group>"; };
 		83805C3719DEBAAA008AD8F0 /* S3Sync */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = S3Sync; sourceTree = BUILT_PRODUCTS_DIR; };
 		83805C3A19DEBAAA008AD8F0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		83805C4219DEBAEA008AD8F0 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -98,6 +104,10 @@
 				83805C5719DEBAFB008AD8F0 /* AFAmazonS3Client */,
 				83805C4119DEBAEA008AD8F0 /* AFNetworking */,
 				83805C3A19DEBAAA008AD8F0 /* main.m */,
+				8332438D19E010F2000B6E4E /* ListObjectsParser.h */,
+				8332438E19E010F2000B6E4E /* ListObjectsParser.m */,
+				8332439019E014D5000B6E4E /* S3Object.h */,
+				8332439119E014D5000B6E4E /* S3Object.m */,
 			);
 			path = S3Sync;
 			sourceTree = "<group>";
@@ -205,7 +215,9 @@
 				83805C6319DEBB26008AD8F0 /* AFNetworkReachabilityManager.m in Sources */,
 				83805C6719DEBB26008AD8F0 /* AFURLResponseSerialization.m in Sources */,
 				83805C6519DEBB26008AD8F0 /* AFURLConnectionOperation.m in Sources */,
+				8332439219E014D5000B6E4E /* S3Object.m in Sources */,
 				83805C6419DEBB26008AD8F0 /* AFSecurityPolicy.m in Sources */,
+				8332438F19E010F2000B6E4E /* ListObjectsParser.m in Sources */,
 				83805C6219DEBB26008AD8F0 /* AFHTTPSessionManager.m in Sources */,
 				83805C6619DEBB26008AD8F0 /* AFURLRequestSerialization.m in Sources */,
 				83805C6819DEBB26008AD8F0 /* AFURLSessionManager.m in Sources */,
@@ -324,6 +336,7 @@
 				83805C4019DEBAAA008AD8F0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
