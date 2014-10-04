@@ -32,13 +32,16 @@ int main(int argc, const char * argv[]) {
         
         // Get the list of objects
         // TODO use marker to get > 1000 of them.
+        NSLog(@"Getting objects");
         [s3Manager GET:@"/" parameters:nil success:^(AFHTTPRequestOperation *operation, NSXMLParser *responseObject) {
+            NSLog(@"Parsing objects");
             ListObjectsParser *listObjects = [ListObjectsParser parse:responseObject];
             NSLog(@"isTruncated: %@", listObjects.isTruncated ? @"Yes" : @"No");
-            NSLog(@"objects: %@", listObjects.objects);
+            NSLog(@"objects[%lu]: %@", (unsigned long)listObjects.objects.count ,listObjects.objects);
             
             shouldKeepRunning = NO;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
             shouldKeepRunning = NO;
         }];
         
@@ -65,15 +68,16 @@ int main(int argc, const char * argv[]) {
         
         // Sign it.
         NSURLRequest *request = [s3Manager.requestSerializer requestBySettingAuthorizationHeadersForRequest:originalRequest error:nil];
-        
-        AFHTTPRequestOperation *operation = [s3Manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            NSLog(@"Upload Complete");
-//            shouldKeepRunning = NO;
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Error: %@", error);
-//            shouldKeepRunning = NO;
-        }];
-        [s3Manager.operationQueue addOperation:operation];
+
+        // Upload it.
+//        AFHTTPRequestOperation *operation = [s3Manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//            NSLog(@"Upload Complete");
+////            shouldKeepRunning = NO;
+//        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//            NSLog(@"Error: %@", error);
+////            shouldKeepRunning = NO;
+//        }];
+//        [s3Manager.operationQueue addOperation:operation];
 
         #warning TODO Would be nice to use the multipart upload (not multipart form!) if the file is >5MB:
         // http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadInitiate.html
