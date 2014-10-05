@@ -15,6 +15,7 @@
     BOOL _isInContents;
     NSString *_text;
     S3Object *_currentObject;
+    NSCharacterSet *_quotes; // For trimming quotes.
 }
 
 + (instancetype)parse:(NSXMLParser *)xml {
@@ -29,6 +30,7 @@
 - (id)init {
     if (self = [super init]) {
         _objects = [NSMutableArray array];
+        _quotes = [NSCharacterSet characterSetWithCharactersInString:@"\""];
     }
     return self;
 }
@@ -49,7 +51,7 @@
         if ([elementName isEqualToString:@"Key"]) {
             _currentObject.key = _text;
         } else if ([elementName isEqualToString:@"ETag"]) {
-            _currentObject.etag = _text;
+            _currentObject.etag = [_text stringByTrimmingCharactersInSet:_quotes];
         } else if ([elementName isEqualToString:@"Size"]) {
             _currentObject.size = _text.longLongValue;
         } else if ([elementName isEqualToString:@"Contents"]) {
