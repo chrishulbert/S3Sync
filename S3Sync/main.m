@@ -36,7 +36,7 @@ int main(int argc, const char * argv[]) {
         // Get the list of objects
         // TODO use marker to get > 1000 of them.
         NSLog(@"Getting object list from S3");
-        [s3Manager GET:@"/" parameters:nil success:^(AFHTTPRequestOperation *operation, NSXMLParser *responseObject) {
+        [context.s3Manager GET:@"/" parameters:nil success:^(AFHTTPRequestOperation *operation, NSXMLParser *responseObject) {
             NSLog(@"Parsing objects");
             ListObjectsParser *listObjects = [ListObjectsParser parse:responseObject];
             NSLog(@"isTruncated: %@", listObjects.isTruncated ? @"Yes" : @"No");
@@ -55,7 +55,7 @@ int main(int argc, const char * argv[]) {
             }
             int filesSame=0, filesMissing=0, filesDiffSize=0, filesDiffHash=0;
             long long sizeOfWork=0;
-            for (LocalFile *local in localFiles) {
+            for (LocalFile *local in context.localFiles) {
                 S3Object *remote = s3ObjectIndex[local.relativePath];
                 if (!remote) {
                     NSLog(@"Remote file missing: %@", local.relativePath);
@@ -91,15 +91,8 @@ int main(int argc, const char * argv[]) {
         NSError *fileError = nil;
         NSData *data = [NSURLConnection sendSynchronousRequest:fileRequest returningResponse:&fileResponse error:&fileError];
         
-        // Get the md5 of it.
-        #warning TODO Use the one from localfile.
-        unsigned char md5Buffer[CC_MD5_DIGEST_LENGTH];
-        CC_MD5(data.bytes, (CC_LONG)data.length, md5Buffer);
-        NSData *md5data = [NSData dataWithBytes:md5Buffer length:sizeof(md5Buffer)];
-        NSString *base64Md5 = [md5data base64EncodedStringWithOptions:0];
-        
         // Build the un-authed request.
-        NSURL *url = [s3Manager.baseURL URLByAppendingPathComponent:@"somefolder/subfolder/car.jpg"];
+        NSURL *url = [context.s3Manager.baseURL URLByAppendingPathComponent:@"somefolder/subfolder/car.jpg"];
         NSMutableURLRequest *originalRequest = [[NSMutableURLRequest alloc] initWithURL:url];
         originalRequest.HTTPMethod = @"PUT";
         originalRequest.HTTPBody = data;
