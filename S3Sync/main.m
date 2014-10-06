@@ -89,6 +89,35 @@ int main(int argc, const char * argv[]) {
                 NSLog(@"Can't handle truncated yet!");
                 exit(1);
             }
+            
+            // Compare now.
+            NSMutableDictionary *s3ObjectIndex = [NSMutableDictionary dictionary];
+            for (S3Object *object in listObjects.objects) {
+                s3ObjectIndex[object.key] = object;
+            }
+            int filesSame=0, filesMissing=0, filesDiffSize=0, filesDiffHash=0;
+            long long sizeOfWork=0;
+            for (LocalFile *local in localFiles) {
+                S3Object *remote = s3ObjectIndex[local.relativePath];
+                if (!remote) {
+                    NSLog(@"Remote file missing: %@", local.relativePath);
+                    filesMissing++;
+                    sizeOfWork += local.size;
+                } else if (remote.size != local.size) {
+                    NSLog(@"File sizes are different: %@; local: %lld; remote: %lld", local.relativePath, local.size, remote.size);
+                    filesDiffSize++;
+                    sizeOfWork += local.size;
+                } else if (![remote.etag isEqualToString:local.md5Etag]) {
+                    NSLog(@"Hashes are different: %@", local.relativePath);
+                    filesDiffHash++;
+                    sizeOfWork += local.size;
+                } else {
+                    NSLog(@"Files are the same: %@", local.relativePath);
+                    filesSame++;
+                }
+            }
+            NSLog(@"Same files: %d, Missing: %d; Diff size: %d; Diff hash: %d; Bytes to do: %lld", filesSame, filesMissing, filesDiffSize, filesDiffHash, sizeOfWork);
+            
 //            todo compare, show how many are different (lots!), how many match
             
             shouldKeepRunning = NO;
