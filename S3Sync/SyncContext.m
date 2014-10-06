@@ -11,4 +11,11 @@
 
 @implementation SyncContext
 
+- (id)init {
+    if (self = [super init]) {
+        _queue = [[NSOperationQueue alloc] init];
+    }
+    return self;
+}
+
 @end

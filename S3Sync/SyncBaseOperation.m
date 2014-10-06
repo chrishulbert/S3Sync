@@ -14,11 +14,17 @@
 @implementation SyncBaseOperation
 
 - (id)initWithContext:(SyncContext *)context {
+    return [self initWithContext:context dependencies:nil];
+}
+
+- (id)initWithContext:(SyncContext *)context dependencies:(NSArray *)dependencies {
     if (self = [super init]) {
         _context = context;
+        for (NSOperation *operation in dependencies) {
+            [self addDependency:operation];
+        }
     }
     return self;
 }
-
 
 @end

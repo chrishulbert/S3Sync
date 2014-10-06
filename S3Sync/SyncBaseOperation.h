@@ -17,4 +17,6 @@
 
 - (id)initWithContext:(SyncContext *)context;
 
+- (id)initWithContext:(SyncContext *)context dependencies:(NSArray *)dependencies;
+
 @end

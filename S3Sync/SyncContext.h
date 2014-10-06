@@ -9,8 +9,13 @@
 
 #import <Foundation/Foundation.h>
 
+@class AFAmazonS3Manager;
+
 @interface SyncContext : NSObject
 
+@property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) NSDictionary *config;
+@property(nonatomic, strong) NSArray *localFiles;
+@property(nonatomic, strong) AFAmazonS3Manager *s3Manager;
 
 @end

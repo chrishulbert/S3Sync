@@ -8,15 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-#import <CommonCrypto/CommonCrypto.h>
-
 #import "AFAmazonS3Manager.h"
 #import "ListObjectsParser.h"
 #import "S3Object.h"
 #import "LocalFile.h"
-#import "NSData+Hex.h"
 #import "SyncContext.h"
 #import "ReadConfigOperation.h"
+#import "ScanLocalFilesOperation.h"
+#import "CreateS3ManagerOperation.h"
 
 BOOL shouldKeepRunning = YES;
 
@@ -28,61 +27,11 @@ int main(int argc, const char * argv[]) {
         
         // Make the operations.
         NSOperation *readConfig = [[ReadConfigOperation alloc] initWithContext:context];
+        NSOperation *scanLocal = [[ScanLocalFilesOperation alloc] initWithContext:context dependencies:@[readConfig]];
+        NSOperation *createS3 = [[CreateS3ManagerOperation alloc] initWithContext:context dependencies:@[readConfig]];
 
         #warning TODO Make the queue, set up the dependencies, dont wait till finished, add one final block to say done.
-//        NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-//        [queue addOperations:@[readConfig] waitUntilFinished:NO];
-        
-        // Find all local files.
-        NSString *localFolder = [context.config[@"LocalFolder"] stringByExpandingTildeInPath];
-        NSDirectoryEnumerator *dirEnum = [[NSFileManager defaultManager] enumeratorAtPath:localFolder];
-        NSMutableArray *localFiles = [NSMutableArray array];
-        NSString *file;
-        while ((file = [dirEnum nextObject])) {
-            // Is it a DS_Store? We want to skip those.
-            BOOL isDSStore = [file hasSuffix:@".DS_Store"];
-            if (!isDSStore) {
-                // Is it a directory? Also want to skip those.
-                NSString *fullPath = [localFolder stringByAppendingPathComponent:file];
-                BOOL isDirectory;
-                [[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:&isDirectory];
-                if (!isDirectory) {
-                    // Add it to the list. We *don't* get the md5 at this point, we get it later so we can show % progress.
-                    LocalFile *localFile = [[LocalFile alloc] init];
-                    localFile.size = [[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:nil].fileSize;
-                    localFile.relativePath = file;
-                    localFile.fullPath = fullPath;
-                    [localFiles addObject:localFile];
-                }
-            }
-        }
-
-        // MD5 the local files.
-        int index=0;
-        for (LocalFile *localFile in localFiles) {
-            NSData *localData = [NSData dataWithContentsOfFile:localFile.fullPath];
-            unsigned char md5Buffer[CC_MD5_DIGEST_LENGTH];
-            CC_MD5(localData.bytes, (CC_LONG)localData.length, md5Buffer);
-            NSData *md5data = [NSData dataWithBytes:md5Buffer length:sizeof(md5Buffer)];
-            localFile.md5Base64 = [md5data base64EncodedStringWithOptions:0];
-            localFile.md5Etag = [md5data lowercaseHexString];
-            
-            // Report progress.
-            index++;
-            if (index % 10 == 0) {
-                NSLog(@"Hashing local files: %lu%%", index*100/localFiles.count);
-            }
-        }
-        NSLog(@"Done hashing local files");
-        
-        NSLog(@"Local files: %@", localFiles);
-        
-        // Create the manager.
-        AFAmazonS3Manager *s3Manager = [[AFAmazonS3Manager alloc] initWithAccessKeyID:context.config[@"AccessKeyID"]
-                                                                               secret:context.config[@"Secret"]];
-        // Not really needed below, but maybe it makes it faster.
-        s3Manager.requestSerializer.region = context.config[@"Region"] ?: AFAmazonS3USStandardRegion;
-        s3Manager.requestSerializer.bucket = context.config[@"Bucket"];
+//        [context.queue addOperations:@[readConfig, scanLocal, createS3] waitUntilFinished:NO];
         
         // Get the list of objects
         // TODO use marker to get > 1000 of them.
