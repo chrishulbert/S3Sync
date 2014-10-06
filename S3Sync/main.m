@@ -15,17 +15,26 @@
 #import "S3Object.h"
 #import "LocalFile.h"
 #import "NSData+Hex.h"
+#import "SyncContext.h"
+#import "ReadConfigOperation.h"
 
 BOOL shouldKeepRunning = YES;
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        // Get the config.
-        NSData *configData = [NSData dataWithContentsOfFile:@"~/S3Sync.config.json".stringByExpandingTildeInPath];
-        NSDictionary *configJson = [NSJSONSerialization JSONObjectWithData:configData options:0 error:nil];
+        
+        // Make the shared context.
+        SyncContext *context = [[SyncContext alloc] init];
+        
+        // Make the operations.
+        NSOperation *readConfig = [[ReadConfigOperation alloc] initWithContext:context];
+
+        #warning TODO Make the queue, set up the dependencies, dont wait till finished, add one final block to say done.
+//        NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+//        [queue addOperations:@[readConfig] waitUntilFinished:NO];
         
         // Find all local files.
-        NSString *localFolder = [configJson[@"LocalFolder"] stringByExpandingTildeInPath];
+        NSString *localFolder = [context.config[@"LocalFolder"] stringByExpandingTildeInPath];
         NSDirectoryEnumerator *dirEnum = [[NSFileManager defaultManager] enumeratorAtPath:localFolder];
         NSMutableArray *localFiles = [NSMutableArray array];
         NSString *file;
@@ -69,11 +78,11 @@ int main(int argc, const char * argv[]) {
         NSLog(@"Local files: %@", localFiles);
         
         // Create the manager.
-        AFAmazonS3Manager *s3Manager = [[AFAmazonS3Manager alloc] initWithAccessKeyID:configJson[@"AccessKeyID"]
-                                                                               secret:configJson[@"Secret"]];
+        AFAmazonS3Manager *s3Manager = [[AFAmazonS3Manager alloc] initWithAccessKeyID:context.config[@"AccessKeyID"]
+                                                                               secret:context.config[@"Secret"]];
         // Not really needed below, but maybe it makes it faster.
-        s3Manager.requestSerializer.region = configJson[@"Region"] ?: AFAmazonS3USStandardRegion;
-        s3Manager.requestSerializer.bucket = configJson[@"Bucket"];
+        s3Manager.requestSerializer.region = context.config[@"Region"] ?: AFAmazonS3USStandardRegion;
+        s3Manager.requestSerializer.bucket = context.config[@"Bucket"];
         
         // Get the list of objects
         // TODO use marker to get > 1000 of them.
