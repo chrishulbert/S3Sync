@@ -77,12 +77,19 @@ int main(int argc, const char * argv[]) {
         
         // Get the list of objects
         // TODO use marker to get > 1000 of them.
-        NSLog(@"Getting objects");
+        NSLog(@"Getting object list from S3");
         [s3Manager GET:@"/" parameters:nil success:^(AFHTTPRequestOperation *operation, NSXMLParser *responseObject) {
             NSLog(@"Parsing objects");
             ListObjectsParser *listObjects = [ListObjectsParser parse:responseObject];
             NSLog(@"isTruncated: %@", listObjects.isTruncated ? @"Yes" : @"No");
             NSLog(@"objects[%lu]: %@", (unsigned long)listObjects.objects.count ,listObjects.objects);
+            
+            #warning TODO Do something if it's truncated.
+            if (listObjects.isTruncated) {
+                NSLog(@"Can't handle truncated yet!");
+                exit(1);
+            }
+//            todo compare, show how many are different (lots!), how many match
             
             shouldKeepRunning = NO;
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
