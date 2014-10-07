@@ -16,7 +16,7 @@
 @property(atomic, strong) NSOperationQueue *queue;
 @property(atomic, strong) NSDictionary *config;
 @property(atomic, strong) NSArray *localFiles;
-@property(atomic, strong) NSArray *remoteFiles;
+@property(atomic, strong) NSArray *remoteFiles; // S3Object instances.
 @property(atomic, strong) AFAmazonS3Manager *s3Manager;
 @property(atomic, assign) BOOL shouldFinishRunning;
 

@@ -14,6 +14,7 @@
 - (id)init {
     if (self = [super init]) {
         _queue = [[NSOperationQueue alloc] init];
+        _queue.maxConcurrentOperationCount = 4;
     }
     return self;
 }

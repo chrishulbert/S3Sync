@@ -18,6 +18,7 @@
 #import "CreateS3ManagerOperation.h"
 #import "GetObjectListOperation.h"
 #import "FinishedOperation.h"
+#import "ComparingOperation.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
@@ -30,7 +31,8 @@ int main(int argc, const char * argv[]) {
         NSOperation *scanLocal = [[ScanLocalFilesOperation alloc] initWithContext:context dependencies:@[readConfig]];
         NSOperation *createS3 = [[CreateS3ManagerOperation alloc] initWithContext:context dependencies:@[readConfig]];
         NSOperation *getS3List = [[GetObjectListOperation alloc] initWithContext:context dependencies:@[createS3]];
-        NSOperation *finished = [[FinishedOperation alloc] initWithContext:context dependencies:@[getS3List]];
+        NSOperation *compare = [[ComparingOperation alloc] initWithContext:context dependencies:@[scanLocal, getS3List]];
+        NSOperation *finished = [[FinishedOperation alloc] initWithContext:context dependencies:@[compare]];
 
         // Start it all off!
         [context.queue addOperations:@[readConfig, scanLocal, createS3, getS3List, finished]
