@@ -37,7 +37,7 @@ int main(int argc, const char * argv[]) {
         
         // Run the run loop.
         NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-        while (!context.shouldFinishRunning && [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]);
+        while (!context.shouldFinishRunning && [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:.1]]);
     }
     return 0;
 }
