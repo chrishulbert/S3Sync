@@ -39,7 +39,7 @@
     NSURLRequest *request = [self.context.s3Manager.requestSerializer requestBySettingAuthorizationHeadersForRequest:originalRequest error:nil];
 
     // Upload it.
-    NSLog(@"Uploading %@", _localFile.relativePath);
+    NSLog(@"Uploading %@ (%.1f%%)", _localFile.relativePath, _percentage*100);
     AFHTTPRequestOperation *operation = [self.context.s3Manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Uploaded %@", _localFile.relativePath);
         [self concurrentFinish];

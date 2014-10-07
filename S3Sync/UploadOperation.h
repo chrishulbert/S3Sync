@@ -16,4 +16,7 @@
 /// The file to upload.
 @property(nonatomic, strong) LocalFile *localFile;
 
+/// What percentage of all the files is this one.
+@property(nonatomic, assign) float percentage;
+
 @end

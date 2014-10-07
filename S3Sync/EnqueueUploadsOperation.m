@@ -21,13 +21,19 @@
     NSOperation *finished = [[FinishedOperation alloc] initWithContext:self.context];
 
     // Queue all the uploads.
+    NSLog(@"Queueing all the uploads");
+    int index=0;
     for (LocalFile *localFile in self.context.localFilesToUpload) {
         #warning TODO If it's a big file do a multipart upload.
         UploadOperation *upload = [[UploadOperation alloc] initWithContext:self.context];
         upload.localFile = localFile;
+        upload.percentage = index / ((float)self.context.localFilesToUpload.count);
         [finished addDependency:upload]; // App can't finish until this is done.
         [self.context.queue addOperation:upload];
+        
+        index++;
     }
+    NSLog(@"Finished queueing all the uploads");
 
     // Queue the 'finished' op to complete last.
     [self.context.queue addOperation:finished];

@@ -35,7 +35,7 @@
     }
     self.context.localFilesToUpload = localFilesToUpload;
     
-    NSLog(@"Finished comparing files");
+    NSLog(@"Finished comparing files, %ld are different", localFilesToUpload.count);
 }
 
 @end
