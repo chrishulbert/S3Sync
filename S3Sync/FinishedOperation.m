@@ -14,6 +14,7 @@
 @implementation FinishedOperation
 
 - (void)main {
+    NSLog(@"Finishing up");
     self.context.shouldFinishRunning = YES;
 }
 
