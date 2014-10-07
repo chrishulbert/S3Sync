@@ -54,7 +54,7 @@
         
         // Report progress.
         index++;
-        if (index % 10 == 0) {
+        if (index % 50 == 0) {
             NSLog(@"Hashing local files: %lu%%", index*100/localFiles.count);
         }
     }

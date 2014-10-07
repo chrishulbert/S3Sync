@@ -13,10 +13,11 @@
 
 @interface SyncContext : NSObject
 
-@property(nonatomic, strong) NSOperationQueue *queue;
-@property(nonatomic, strong) NSDictionary *config;
-@property(nonatomic, strong) NSArray *localFiles;
-@property(nonatomic, strong) NSArray *remoteFiles;
-@property(nonatomic, strong) AFAmazonS3Manager *s3Manager;
+@property(atomic, strong) NSOperationQueue *queue;
+@property(atomic, strong) NSDictionary *config;
+@property(atomic, strong) NSArray *localFiles;
+@property(atomic, strong) NSArray *remoteFiles;
+@property(atomic, strong) AFAmazonS3Manager *s3Manager;
+@property(atomic, assign) BOOL shouldFinishRunning;
 
 @end

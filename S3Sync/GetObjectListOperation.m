@@ -24,23 +24,22 @@
 - (void)getS3ListFromMarker:(NSString *)marker {
     // Make the params.
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    params[@"max-keys"] = @100; // TODO remove
     if (marker) {
         params[@"marker"] = marker;
     }
     
     if (marker) {
-        NSLog(@"Getting initial object list from S3");
-    } else {
         NSLog(@"Getting object list from S3 from marker: %@", marker);
+    } else {
+        NSLog(@"Getting initial object list from S3");
     }
     
-    #warning TODO Expect 385 (inc ds store and folders)
     [self.context.s3Manager GET:@"/" parameters:params success:^(AFHTTPRequestOperation *operation, NSXMLParser *responseObject) {
+        // Parse it. It's important that nothing is filtered out, as the correct last one is needed for the marker.
         ListObjectsParser *listObjects = [ListObjectsParser parse:responseObject];
         
         // Progress report.
-        NSLog(@"Got %lu objects; isTruncated: %@", listObjects.objects.count, listObjects.isTruncated ? @"Yes" : @"No");
+        NSLog(@"Got %lu objects from S3; isTruncated: %@", listObjects.objects.count, listObjects.isTruncated ? @"Yes" : @"No");
         
         // Save  the files into the context.
         if (self.context.remoteFiles) { // Add it to existing files.
