@@ -16,6 +16,7 @@
 #import "ReadConfigOperation.h"
 #import "ScanLocalFilesOperation.h"
 #import "CreateS3ManagerOperation.h"
+#import "GetObjectListOperation.h"
 
 BOOL shouldKeepRunning = YES;
 
@@ -29,6 +30,7 @@ int main(int argc, const char * argv[]) {
         NSOperation *readConfig = [[ReadConfigOperation alloc] initWithContext:context];
         NSOperation *scanLocal = [[ScanLocalFilesOperation alloc] initWithContext:context dependencies:@[readConfig]];
         NSOperation *createS3 = [[CreateS3ManagerOperation alloc] initWithContext:context dependencies:@[readConfig]];
+        NSOperation *getS3List = [[GetObjectListOperation alloc] initWithContext:context dependencies:@[createS3]];
 
         #warning TODO Make the queue, set up the dependencies, dont wait till finished, add one final block to say done.
 //        [context.queue addOperations:@[readConfig, scanLocal, createS3] waitUntilFinished:NO];

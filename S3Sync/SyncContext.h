@@ -16,6 +16,7 @@
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) NSDictionary *config;
 @property(nonatomic, strong) NSArray *localFiles;
+@property(nonatomic, strong) NSArray *remoteFiles;
 @property(nonatomic, strong) AFAmazonS3Manager *s3Manager;
 
 @end
