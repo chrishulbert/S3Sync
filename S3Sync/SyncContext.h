@@ -18,6 +18,7 @@
 @property(atomic, strong) NSArray *localFiles;
 @property(atomic, strong) NSArray *remoteFiles; // S3Object instances.
 @property(atomic, strong) AFAmazonS3Manager *s3Manager;
+@property(atomic, strong) NSArray *localFilesToUpload;
 @property(atomic, assign) BOOL shouldFinishRunning;
 
 @end

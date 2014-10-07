@@ -33,6 +33,7 @@
             [localFilesToUpload addObject:local];
         }
     }
+    self.context.localFilesToUpload = localFilesToUpload;
     
     NSLog(@"Finished comparing files");
 }

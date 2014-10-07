@@ -19,6 +19,7 @@
 #import "GetObjectListOperation.h"
 #import "FinishedOperation.h"
 #import "ComparingOperation.h"
+#import "EnqueueUploadsOperation.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
@@ -32,10 +33,10 @@ int main(int argc, const char * argv[]) {
         NSOperation *createS3 = [[CreateS3ManagerOperation alloc] initWithContext:context dependencies:@[readConfig]];
         NSOperation *getS3List = [[GetObjectListOperation alloc] initWithContext:context dependencies:@[createS3]];
         NSOperation *compare = [[ComparingOperation alloc] initWithContext:context dependencies:@[scanLocal, getS3List]];
-        NSOperation *finished = [[FinishedOperation alloc] initWithContext:context dependencies:@[compare]];
+        NSOperation *enqueue = [[EnqueueUploadsOperation alloc] initWithContext:context dependencies:@[compare]];
 
         // Start it all off!
-        [context.queue addOperations:@[readConfig, scanLocal, createS3, getS3List, finished]
+        [context.queue addOperations:@[readConfig, scanLocal, createS3, getS3List, compare, enqueue]
                    waitUntilFinished:NO];
         
 //        // Get the list of objects
@@ -89,36 +90,7 @@ int main(int argc, const char * argv[]) {
 //            shouldKeepRunning = NO;
 //        }];
 //        
-//        // Get the file using url loading mechanisms to get the mime type.
-//        NSMutableURLRequest *fileRequest = [NSMutableURLRequest requestWithURL:[NSURL fileURLWithPath:@"/Users/chris/car.jpg"]];
-//        fileRequest.cachePolicy = NSURLCacheStorageNotAllowed;
-//        NSURLResponse *fileResponse = nil;
-//        NSError *fileError = nil;
-//        NSData *data = [NSURLConnection sendSynchronousRequest:fileRequest returningResponse:&fileResponse error:&fileError];
-//        
-//        // Build the un-authed request.
-//        NSURL *url = [context.s3Manager.baseURL URLByAppendingPathComponent:@"somefolder/subfolder/car.jpg"];
-//        NSMutableURLRequest *originalRequest = [[NSMutableURLRequest alloc] initWithURL:url];
-//        originalRequest.HTTPMethod = @"PUT";
-//        originalRequest.HTTPBody = data;
-//        [originalRequest setValue:base64Md5 forHTTPHeaderField:@"Content-MD5"];
-//        [originalRequest setValue:fileResponse.MIMEType forHTTPHeaderField:@"Content-Type"];
-//        
-//        // Sign it.
-//        NSURLRequest *request = [s3Manager.requestSerializer requestBySettingAuthorizationHeadersForRequest:originalRequest error:nil];
-//
-//        // Upload it.
-////        AFHTTPRequestOperation *operation = [s3Manager HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
-////            NSLog(@"Upload Complete");
-//////            shouldKeepRunning = NO;
-////        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-////            NSLog(@"Error: %@", error);
-//////            shouldKeepRunning = NO;
-////        }];
-////        [s3Manager.operationQueue addOperation:operation];
-//
-//        #warning TODO Would be nice to use the multipart upload (not multipart form!) if the file is >5MB:
-//        // http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadInitiate.html
+
 //        
         // Run the run loop.
         NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
