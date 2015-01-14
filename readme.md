@@ -8,7 +8,7 @@ This app will upload 4 files at a time, and is lightning quick in my tests. 223 
 
 ## Config
 
-To use the app, you need a file called `S3Sync.config.json` in your home folder, with the following contents:
+To use the app, you need a file called `S3Sync.config.json` in your home folder, or `_S3Sync.config.json` in the current folder (current folder gets priority), with the following contents:
 
 	{
 		"AccessKeyID": "ABC123",
@@ -17,3 +17,5 @@ To use the app, you need a file called `S3Sync.config.json` in your home folder,
 		"Region": "s3.amazonaws.com",
 		"LocalFolder": "~/My/Jekyll/_site"
 	}
+
+LocalFolder can also be a relative link such as `./_site`
