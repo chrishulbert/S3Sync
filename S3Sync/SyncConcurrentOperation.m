@@ -9,14 +9,10 @@
 
 #import "SyncConcurrentOperation.h"
 
-@interface SyncConcurrentOperation()
-
-@property (assign, nonatomic, getter = isExecuting) BOOL executing;
-@property (assign, nonatomic, getter = isFinished) BOOL finished;
-
-@end
-
-@implementation SyncConcurrentOperation
+@implementation SyncConcurrentOperation {
+    BOOL _finished;
+    BOOL _executing;
+}
 
 - (void)start {
     self.executing = YES;
@@ -42,6 +38,14 @@
     [self willChangeValueForKey:@"isExecuting"];
     _executing = executing;
     [self didChangeValueForKey:@"isExecuting"];
+}
+
+- (BOOL)isExecuting {
+    return _executing;
+}
+
+- (BOOL)isFinished {
+    return _finished;
 }
 
 - (BOOL)isConcurrent {
